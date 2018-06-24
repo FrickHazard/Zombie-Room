@@ -14,13 +14,22 @@ public class Exit : MonoBehaviour {
         collider = GetComponent<Collider2D>();
     }
 
-    public void Initialize(Vector2 location, Room room)
+    public void SetFromData(ExitData data)
     {
-        this.transform.position = location;
+        this.transform.position = data.Location;
     }
 
     public void AddCorrespondingExit(Exit exit)
     {
         CorrespondingExit = exit;
     }
+
+    public void OnClick(Vector2 mousePosition)
+    {
+        if (collider.OverlapPoint(mousePosition))
+        {
+
+        }
+    }
+
 }

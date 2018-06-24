@@ -13,9 +13,16 @@ public class CameraController : MonoBehaviour {
         GameState.RegisterCameraController(this);
     }
 
-    public void CenterCameraOnRoom(Room room)
+    public void CenterCameraOnRoom(RoomData roomData)
     {
-       var greaterBound = room.Height > room.Width ? room.Height : room.Width;
-       cam.orthographicSize = (float)greaterBound / 2;
+        var aspect = cam.aspect;
+        if (roomData.Height > roomData.Width / aspect)
+        {
+            cam.orthographicSize = (float)roomData.Height / 2;
+        }
+        else
+        {
+            cam.orthographicSize = ((float)roomData.Width / aspect) / 2;
+        }     
     }
 }

@@ -3,29 +3,39 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Room : MonoBehaviour {
-
-    public RoomBackground backgroundPrefab;
-    private RoomBackground background;
-    public List<Exit> exits = new List<Exit>();
-    public int Width = 0;
-    public int Height = 0;
+    public Exit exitPrefab;
+    public RoomBackground BackgroundPrefab;
+    private RoomBackground Background;
+    public List<Exit> Exits = new List<Exit>();
 
     private void Awake()
     {
-        background = Instantiate(backgroundPrefab);
+        Background = Instantiate(BackgroundPrefab);
+        GameState.RegisterMainRoom(this);
     }
 
-    public void Initialize(int size)
+    public void SetFromData(RoomData data)
     {
-        Width = size;
-        Height = size;
-        background.Initialize(size, Random.ColorHSV());
+        Background.Set(data.Width, data.Height, Random.ColorHSV());
+        foreach (var exit in Exits)
+        {
+            Destroy(exit);
+        }
+        Exits.Clear();
+        foreach (var exitData in data.Exits)
+        {
+            var exit = Instantiate(exitPrefab);
+            exit.SetFromData(exitData);
+            exit.transform.parent = this.transform;
+            Exits.Add(exit);
+        }
+
     }
 
 
     public void LockExits()
     {
-        foreach (Exit exit in exits)
+        foreach (Exit exit in Exits)
         {
             exit.Locked = true;
         }

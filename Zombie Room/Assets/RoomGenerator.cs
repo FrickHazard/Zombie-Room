@@ -5,30 +5,85 @@ using UnityEngine;
 public class RoomGenerator : MonoBehaviour
 {
     public Room roomPrefab;
-    public Exit exitPrefab;
 
-    private int maxSize = 5;
-    private int minSize = 2;
+    private int maxSize = 7;
+    private int minSize = 3;
 
-    public void BuildRootRoom()
+    private RoomData CreateRoom(bool leftRoom, bool rightRoom, bool upRoom, bool downRoom)
     {
-        int size = Random.Range(minSize, maxSize);
-        var room = Instantiate(roomPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-        room.Initialize(size);
-        var exit1 = Instantiate(exitPrefab);
-        exit1.Initialize(new Vector2((float)size / 2, 0), room);
-        var exit2 = Instantiate(exitPrefab);
-        exit2.Initialize(new Vector2(0, (float)size / 2), room);
-        var exit3 = Instantiate(exitPrefab);
-        exit3.Initialize(new Vector2(-(float)size / 2, 0), room);
-        var exit4 = Instantiate(exitPrefab);
-        exit4.Initialize(new Vector2(0, -(float)size / 2), room);
-        GameState.FocusCameraToRoom(room);
+        int width = Random.Range(minSize, maxSize);
+        int height = Random.Range(minSize, maxSize);
+        var roomData = DataFactory.CreateRoomData(width, height);
+        List<ExitData> exits = new List<ExitData>();
+        if (leftRoom)
+        {
+            var location = new Vector2(-(float)roomData.Width / 2, 0);
+            var exitData = DataFactory.CreateExitData(location, roomData.ID, ExitDirection.West);
+            exits.Add(exitData);
+        }
+        if (rightRoom)
+        {
+            var location = new Vector2((float)roomData.Width / 2, 0);
+            var exitData = DataFactory.CreateExitData(location, roomData.ID, ExitDirection.East);
+            exits.Add(exitData);
+        }
+        if (upRoom)
+        {
+            var location = new Vector2(0, (float)roomData.Height / 2);
+            var exitData = DataFactory.CreateExitData(location, roomData.ID, ExitDirection.North);
+            exits.Add(exitData);
+        }
+        if (downRoom)
+        {
+            var location = new Vector2(0, -(float)roomData.Height / 2);
+            var exitData = DataFactory.CreateExitData(location, roomData.ID, ExitDirection.South);
+            exits.Add(exitData);
+        }
+        roomData.SetExitIDs(exits.ToArray());
+        return roomData;
+    }
+
+    public void BuildRoomFromExit(ExitData exitData)
+    {
+        bool leftRoom = false;
+        bool rightRoom = false;
+        bool upRoom = false;
+        bool downRoom = false;
+        switch (exitData.Direction)
+        {
+            case ExitDirection.North:
+                {
+                    downRoom = true;
+                    break;
+
+                }
+            case ExitDirection.South:
+                {
+                    upRoom = true;
+                    break;
+                }
+            case ExitDirection.East:
+                {
+                    leftRoom = true;
+                    break;
+                }
+            case ExitDirection.West:
+                {
+                    rightRoom = true;
+                    break;
+                }
+        }
+        if (!leftRoom) leftRoom = (Random.value > 0.5f);
+        if (!rightRoom) rightRoom = (Random.value > 0.5f);
+        if (!upRoom) upRoom = (Random.value > 0.5f);
+        if (!downRoom) downRoom = (Random.value > 0.5f);
+        CreateRoom(leftRoom, rightRoom, upRoom, downRoom);
     }
 
 
     private void Start()
     {
-        BuildRootRoom();
+        var rootRoomData = CreateRoom(true, true, true, true);
+        GameState.SetRoomData(rootRoomData);
     }
 }
