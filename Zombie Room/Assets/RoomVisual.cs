@@ -4,19 +4,15 @@ using UnityEngine;
 
 public class RoomVisual : MonoBehaviour {
     public Exit exitPrefab;
-    public RoomBackground BackgroundPrefab;
-    private RoomBackground Background;
     public List<Exit> Exits = new List<Exit>();
 
     private void Awake()
     {
-        Background = Instantiate(BackgroundPrefab);
         GameState.RegisterMainRoom(this);
     }
 
     public void SetFromData(RoomData data)
     {
-        Background.Set(data.Width, data.Height, Random.ColorHSV());
         foreach (var exit in Exits)
         {
             Destroy(exit.gameObject);
@@ -31,7 +27,6 @@ public class RoomVisual : MonoBehaviour {
         }
 
     }
-
 
     public void LockExits()
     {

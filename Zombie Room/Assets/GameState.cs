@@ -23,6 +23,7 @@ public static class GameState {
     private static RoomVisual roomVisual;
     private static InputManager inputManager;
     private static PlayerEntity playerEntity;
+    private static RoomBackground roomBackground;
 
 
     public static void RegisterCameraController(CameraController camController)
@@ -49,6 +50,12 @@ public static class GameState {
         playerEntity = _playerEntity;
     }
 
+    public static void RegisterRoomBackground(RoomBackground background)
+    {
+        if (roomBackground) throw new InvalidOperationException("A room background was already registered");
+        roomBackground = background;
+    }
+
     public static void FocusCameraToRoom(RoomData roomData)
     {
         CameraController.CenterCameraOnRoom(roomData);
@@ -57,6 +64,7 @@ public static class GameState {
     public static void SetRoomData(RoomData roomData)
     {
         roomVisual.SetFromData(roomData);
+        roomBackground.SetFromData(roomData);
         FocusCameraToRoom(roomData);
     }
 
