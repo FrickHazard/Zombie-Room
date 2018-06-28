@@ -7,6 +7,7 @@ public class RoomBackground : MonoBehaviour {
 
     public void Set(int width, int height, Color color)
     {
+        this.transform.localScale = new Vector3(1, 1, 1);
         var renderer = GetComponent<SpriteRenderer>();
         var sprite = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
         renderer.sprite = sprite;

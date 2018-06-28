@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Room : MonoBehaviour {
+public class RoomVisual : MonoBehaviour {
     public Exit exitPrefab;
     public RoomBackground BackgroundPrefab;
     private RoomBackground Background;
@@ -19,7 +19,7 @@ public class Room : MonoBehaviour {
         Background.Set(data.Width, data.Height, Random.ColorHSV());
         foreach (var exit in Exits)
         {
-            Destroy(exit);
+            Destroy(exit.gameObject);
         }
         Exits.Clear();
         foreach (var exitData in data.Exits)

@@ -5,35 +5,48 @@ using UnityEngine;
 
 public static class GameState {
 
-    private static int PlayerHealth = -1;
-    private static int PlayerArmor= -1;
-    private static bool RoomIsActive;
+
+    public static float PlayerSpeed { get { return playerSpeed; } }
+    private static float playerSpeed = 0.1f;
+
+    public static float PlayerHealth { get { return playerHealth; } }
+    private static int playerHealth = -1;
+
+    public static float PlayerArmor { get { return playerArmor; } }
+    private static int playerArmor = -1;
+
+    private static bool playerInMovementTowardExit = false;
+
+    private static ExitData exitPlayerIsMovingTowards = null;
+    // register stuff
     private static CameraController CameraController;
-    private static Room ActiveRoom;
+    private static RoomVisual roomVisual;
     private static InputManager inputManager;
-    private static bool _cameraControllerRegistered = false;
-    private static bool _roomRegistered = false;
-    private static bool _inputManagerRegistered = false;
+    private static PlayerEntity playerEntity;
+
 
     public static void RegisterCameraController(CameraController camController)
     {
-        if (_cameraControllerRegistered) throw new InvalidOperationException("A camera was already registered");
+        if (CameraController) throw new InvalidOperationException("A camera was already registered");
         CameraController = camController;
-        _cameraControllerRegistered = true;
     }
     
-    public static void RegisterMainRoom(Room room)
+    public static void RegisterMainRoom(RoomVisual _activeRoom)
     {
-        if (_roomRegistered) throw new InvalidOperationException("A room was already registered");
-        ActiveRoom = room;
-        _roomRegistered = true;
+        if (roomVisual) throw new InvalidOperationException("A room was already registered");
+        roomVisual = _activeRoom;
     }
 
-    public static void RegisterInputManager(InputManager inputManger)
+    public static void RegisterInputManager(InputManager _inputManager)
     {
-        if (_inputManagerRegistered) throw new InvalidOperationException("A room was already registered");
-        inputManager = inputManger;
-        _inputManagerRegistered = true;
+        if (inputManager) throw new InvalidOperationException("A room was already registered");
+        inputManager = _inputManager;
+    }
+
+    public static void RegisterPlayerEntity(PlayerEntity _playerEntity)
+    {
+        if (playerEntity) throw new InvalidOperationException("A player was already registered");
+        playerEntity = _playerEntity;
     }
 
     public static void FocusCameraToRoom(RoomData roomData)
@@ -43,12 +56,28 @@ public static class GameState {
 
     public static void SetRoomData(RoomData roomData)
     {
-        ActiveRoom.SetFromData(roomData);
+        roomVisual.SetFromData(roomData);
         FocusCameraToRoom(roomData);
     }
 
-    public static Room GetActiveRoom()
+    public static RoomVisual GetActiveRoom()
     {
-        return ActiveRoom;
+        return roomVisual;
+    }
+
+    public static void StartPlayerMovement(Vector2 target, ExitData exitData)
+    {
+        playerInMovementTowardExit = true;
+        exitPlayerIsMovingTowards = exitData;
+        playerEntity.StartMovement(target);
+    }
+
+
+    public static void OnEndPlayerMovement()
+    {
+        SetRoomData(exitPlayerIsMovingTowards.CorrespondingExit.Room);
+        playerEntity.SetPlayerEntityPosition(exitPlayerIsMovingTowards.CorrespondingExit.Location);
+        exitPlayerIsMovingTowards = null;
+        playerInMovementTowardExit = false;
     }
 }

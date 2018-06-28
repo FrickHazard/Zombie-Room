@@ -2,21 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct RoomData {
+public class RoomData {
     public int Width;
     public int Height;
     public ExitData[] Exits;
-    public int ID;
 
-    public RoomData (int width, int height, int id) {
+    public RoomData (int width, int height) {
         Width = width;
         Height = height;
         Exits = new ExitData[0];
-        ID = id;
     }
 
-    public void SetExitIDs(ExitData[] exits)
+    public void SetExits(ExitData[] exits)
     {
+        foreach (ExitData exitData in exits)
+        {
+            exitData.Room = this;
+        }
         Exits = exits;
     }
 }

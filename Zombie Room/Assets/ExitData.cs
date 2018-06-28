@@ -2,24 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct ExitData {
-    public int RoomId;
-    public int CorrespondingExitId;
+public class ExitData {
+    public RoomData Room;
+    public ExitData CorrespondingExit = null;
     public Vector2 Location;
     public ExitDirection Direction;
-    public int ID;
 
-    public ExitData(int roomId, Vector2 location, int id, ExitDirection direction)
+    public ExitData(Vector2 location, ExitDirection direction)
     {
         Direction = direction;
-        RoomId = roomId;
-        CorrespondingExitId = -1;
         Location = location;
-        ID = id;
     }
 
-    public void SetCorrespondingExitID(int id)
+    public void SetCorrespondingExit(ExitData exitData)
     {
-        CorrespondingExitId = id;
+        CorrespondingExit = exitData;
     }
 }
